@@ -1,0 +1,256 @@
+Microsoft Windows XP [Version 5.1.2600]
+(C) Copyright 1985-2001 Microsoft Corp.
+
+C:\Documents and Settings\Administrator>mysql
+ERROR 1045 (28000): Access denied for user 'ODBC'@'localhost' (using password: N
+O)
+
+C:\Documents and Settings\Administrator>mysql -u root -p
+Enter password:
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 2
+Server version: 5.0.67-community MySQL Community Edition (GPL)
+
+Type 'help;' or '\h' for help. Type '\c' to clear the buffer.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| cdcol              |
+| mysql              |
+| phpmyadmin         |
+| test               |
+| webauth            |
++--------------------+
+6 rows in set (0.05 sec)
+
+mysql> create  database my_db;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> create table customers( ID INT NOT NULL, NAME VARCHAR(40) NOT NULL, AGE I
+NT NOT NULL, ADDRESS VARCHAR(100), SALARY DECIMAL(18.2) DEFAULT 50000.00, PRIMAR
+Y KEY(ID));
+ERROR 1046 (3D000): No database selected
+mysql> use my_db;
+Database changed
+mysql> create table customers( ID INT NOT NULL, NAME VARCHAR(40) NOT NULL, AGE I
+NT NOT NULL, ADDRESS VARCHAR(100), SALARY DECIMAL(18.2) DEFAULT 50000.00, PRIMAR
+Y KEY(ID));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> describe customers
+    -> ;
++---------+---------------+------+-----+---------+-------+
+| Field   | Type          | Null | Key | Default | Extra |
++---------+---------------+------+-----+---------+-------+
+| ID      | int(11)       | NO   | PRI | NULL    |       |
+| NAME    | varchar(40)   | NO   |     | NULL    |       |
+| AGE     | int(11)       | NO   |     | NULL    |       |
+| ADDRESS | varchar(100)  | YES  |     | NULL    |       |
+| SALARY  | decimal(18,0) | YES  |     | 50000   |       |
++---------+---------------+------+-----+---------+-------+
+5 rows in set (0.02 sec)
+
+mysql> create table orders(ORDER_ID INT NOT NULL, DATE DATETIME, CUSTOMER_ID INT
+ reference customers(ID), AMOUNT DOUBLE, PRIMARY KEY(ORDER_ID));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that
+corresponds to your MySQL server version for the right syntax to use near 'refer
+ence customers(ID), AMOUNT DOUBLE, PRIMARY KEY(ORDER_ID))' at line 1
+mysql> create table orders(ORDER_ID INT NOT NULL, DATE DATETIME, CUSTOMER_ID INT
+ references customers(ID), AMOUNT DOUBLE, PRIMARY KEY(ORDER_ID));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> describe orders
+    -> ;
++-------------+----------+------+-----+---------+-------+
+| Field       | Type     | Null | Key | Default | Extra |
++-------------+----------+------+-----+---------+-------+
+| ORDER_ID    | int(11)  | NO   | PRI | NULL    |       |
+| DATE        | datetime | YES  |     | NULL    |       |
+| CUSTOMER_ID | int(11)  | YES  |     | NULL    |       |
+| AMOUNT      | double   | YES  |     | NULL    |       |
++-------------+----------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> show tables;
++-----------------+
+| Tables_in_my_db |
++-----------------+
+| customers       |
+| orders          |
++-----------------+
+2 rows in set (0.00 sec)
+
+mysql> insert into customers (ID, NAME, AGE, ADDRESS, SALARY) VALUES(1,'kuddus',
+22,'Dhaka',45000);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into orders (ORDER_ID,DATE,CUSTOMER_ID,AMOUNT) VALUES(1,'18/09/201
+3',2,3400);
+Query OK, 1 row affected, 1 warning (0.00 sec)
+
+mysql> select * from orders
+    -> ;
++----------+---------------------+-------------+--------+
+| ORDER_ID | DATE                | CUSTOMER_ID | AMOUNT |
++----------+---------------------+-------------+--------+
+|        1 | 0000-00-00 00:00:00 |           2 |   3400 |
++----------+---------------------+-------------+--------+
+1 row in set (0.00 sec)
+
+mysql> insert into orders (ORDER_ID,DATE,CUSTOMER_ID,AMOUNT) VALUES(2,'18/09/201
+3 2:2:2',2,3400);
+Query OK, 1 row affected, 1 warning (0.00 sec)
+
+mysql> select * from orders;
++----------+---------------------+-------------+--------+
+| ORDER_ID | DATE                | CUSTOMER_ID | AMOUNT |
++----------+---------------------+-------------+--------+
+|        1 | 0000-00-00 00:00:00 |           2 |   3400 |
+|        2 | 0000-00-00 00:00:00 |           2 |   3400 |
++----------+---------------------+-------------+--------+
+2 rows in set (0.00 sec)
+
+mysql> insert into orders (ORDER_ID,DATE,CUSTOMER_ID,AMOUNT) VALUES(3,'2013-8-8
+2:2:2',1,3400);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from orders;
++----------+---------------------+-------------+--------+
+| ORDER_ID | DATE                | CUSTOMER_ID | AMOUNT |
++----------+---------------------+-------------+--------+
+|        1 | 0000-00-00 00:00:00 |           2 |   3400 |
+|        2 | 0000-00-00 00:00:00 |           2 |   3400 |
+|        3 | 2013-08-08 02:02:02 |           1 |   3400 |
++----------+---------------------+-------------+--------+
+3 rows in set (0.00 sec)
+
+mysql> drop table orders;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> create table orders(ORDER_ID INT NOT NULL, DATE DATETIME, CUSTOMER_ID INT
+ references customers(ID), AMOUNT DOUBLE, PRIMARY KEY(ORDER_ID));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> describe orders;
++-------------+----------+------+-----+---------+-------+
+| Field       | Type     | Null | Key | Default | Extra |
++-------------+----------+------+-----+---------+-------+
+| ORDER_ID    | int(11)  | NO   | PRI | NULL    |       |
+| DATE        | datetime | YES  |     | NULL    |       |
+| CUSTOMER_ID | int(11)  | YES  |     | NULL    |       |
+| AMOUNT      | double   | YES  |     | NULL    |       |
++-------------+----------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> drop table orders;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> create table orders(ORDER_ID INT NOT NULL, DATE DATETIME, CUSTOMER_ID INT
+, AMOUNT DOUBLE,FOREIGN KEY(CUSTOMER_ID) REFERENCES CUSTOMER(ID), PRIMARY KEY(OR
+DER_ID));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> insert into orders (ORDER_ID,DATE,CUSTOMER_ID,AMOUNT) VALUES(3,'2013-8-8
+2:2:2',2,3400);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from customers;
++----+--------+-----+---------+--------+
+| ID | NAME   | AGE | ADDRESS | SALARY |
++----+--------+-----+---------+--------+
+|  1 | kuddus |  22 | Dhaka   |  45000 |
++----+--------+-----+---------+--------+
+1 row in set (0.00 sec)
+
+mysql> select * from orders;
++----------+---------------------+-------------+--------+
+| ORDER_ID | DATE                | CUSTOMER_ID | AMOUNT |
++----------+---------------------+-------------+--------+
+|        3 | 2013-08-08 02:02:02 |           2 |   3400 |
++----------+---------------------+-------------+--------+
+1 row in set (0.00 sec)
+
+mysql> describe orders;
++-------------+----------+------+-----+---------+-------+
+| Field       | Type     | Null | Key | Default | Extra |
++-------------+----------+------+-----+---------+-------+
+| ORDER_ID    | int(11)  | NO   | PRI | NULL    |       |
+| DATE        | datetime | YES  |     | NULL    |       |
+| CUSTOMER_ID | int(11)  | YES  | MUL | NULL    |       |
+| AMOUNT      | double   | YES  |     | NULL    |       |
++-------------+----------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> select * from orders;
++----------+---------------------+-------------+--------+
+| ORDER_ID | DATE                | CUSTOMER_ID | AMOUNT |
++----------+---------------------+-------------+--------+
+|        3 | 2013-08-08 02:02:02 |           2 |   3400 |
++----------+---------------------+-------------+--------+
+1 row in set (0.00 sec)
+
+mysql> insert into orders (ORDER_ID,DATE,CUSTOMER_ID,AMOUNT) VALUES(3,'2013-8-8
+2:2:2',3,3400);
+ERROR 1062 (23000): Duplicate entry '3' for key 1
+mysql> insert into orders (ORDER_ID,DATE,CUSTOMER_ID,AMOUNT) VALUES(4,'2013-8-8
+2:2:2',3,3400);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> drop table orders;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> create table orders(ORDER_ID INT NOT NULL, DATE DATETIME, CUSTOMER_ID INT
+ references customers(ID), AMOUNT DOUBLE, PRIMARY KEY(ORDER_ID));
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> insert into orders (ORDER_ID,DATE,CUSTOMER_ID,AMOUNT) VALUES(3,'2013-8-8
+2:2:2',2,3400);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from customers;
++----+--------+-----+---------+--------+
+| ID | NAME   | AGE | ADDRESS | SALARY |
++----+--------+-----+---------+--------+
+|  1 | kuddus |  22 | Dhaka   |  45000 |
++----+--------+-----+---------+--------+
+1 row in set (0.00 sec)
+
+mysql> drop table orders;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> create table orders(ORDER_ID INT NOT NULL, DATE DATETIME, CUSTOMER_ID INT
+ not null, AMOUNT DOUBLE, PRIMARY KEY(ORDER_ID), FOREIGN KEY(CUSTOMER_ID) refere
+nces CUSTOMERS(ID))ENGINE=InnoDB;
+ERROR 1005 (HY000): Can't create table '.\my_db\orders.frm' (errno: 150)
+mysql> create table orders(ORDER_ID INT NOT NULL, DATE DATETIME, CUSTOMER_ID INT
+ not null, AMOUNT DOUBLE, PRIMARY KEY(ORDER_ID), FOREIGN KEY(CUSTOMER_ID) refere
+nces CUSTOMERS(ID));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> describe orders;
++-------------+----------+------+-----+---------+-------+
+| Field       | Type     | Null | Key | Default | Extra |
++-------------+----------+------+-----+---------+-------+
+| ORDER_ID    | int(11)  | NO   | PRI | NULL    |       |
+| DATE        | datetime | YES  |     | NULL    |       |
+| CUSTOMER_ID | int(11)  | NO   | MUL | NULL    |       |
+| AMOUNT      | double   | YES  |     | NULL    |       |
++-------------+----------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> insert into orders (ORDER_ID,DATE,CUSTOMER_ID,AMOUNT) VALUES(4,'2013-8-8
+2:2:2',2,3400);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from orders;
++----------+---------------------+-------------+--------+
+| ORDER_ID | DATE                | CUSTOMER_ID | AMOUNT |
++----------+---------------------+-------------+--------+
+|        4 | 2013-08-08 02:02:02 |           2 |   3400 |
++----------+---------------------+-------------+--------+
+1 row in set (0.00 sec)
+
+mysql>
